@@ -1,0 +1,52 @@
+[project]
+name = "imsearch-tools"
+version = "2.0+dev"
+description = "Web Image Downloader Tools"
+
+readme = "README.md"
+license = {file = "LICENSE.md"}
+
+authors = [
+    {name = "Ken Chatfield", email = "ken@robots.ox.ac.uk"},
+    {name = "Kevin McGuinness", email = "kevin.mcguinness@eeng.dcu.ie"},
+    {name = "Ernesto Coto", email = "ecoto@robots.ox.ac.uk"},
+]
+
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "gevent>=1.0.1",
+    "requests>=2.9.1",
+    "pillow>=2.7.0",
+    "flask>=0.10.1",
+    "pyzmq>=14.3.1",
+]
+
+[tool.black]
+line-length = 79
+target-version = ['py37']
+
+[tool.isort]
+profile = "black"
+py_version=37
+line_length = 79
+lines_after_imports = 2
+# Despite the profile option being set to "black", there's still some
+# options that are not correcly set in a compatible manner.  The
+# following are for compatibility with black style.
+combine_as_imports = true
+include_trailing_comma = true
+multi_line_output = 3  # multi lineoutput 3 is vert-hanging
+
+[tool.pylint.messages_control]
+# Disable these Convention messages because that's Black style.
+# C0326: Bad whitespace
+# C0330: Wrong hanging indentation before block (add 4 spaces)
+disable = "C0326, C0330"
+
+[tool.pylint.FORMAT]
+max-line-length = 79
