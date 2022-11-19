@@ -1,8 +1,7 @@
 from gevent import monkey
 
-from . import engines as query
 from . import (
-    http_service_helper,
+    engines as query,
     postproc_modules,
     process,
     utils,
