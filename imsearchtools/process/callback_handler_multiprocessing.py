@@ -10,7 +10,9 @@ Created on: 20 Oct 2012
 import logging
 import multiprocessing
 
+
 log = logging.getLogger(__name__)
+
 
 class CallbackHandler(object):
     """Class for wrapping callbacks using ZMQ
@@ -29,6 +31,7 @@ class CallbackHandler(object):
     Once `task_count` tasks have been run and completed, the workers will
     shut down. Wait for this condition by calling `join()`.
     """
+
     def __init__(self, worker_func, task_count, worker_count=-1):
         # initialize completion task worker pool
         # if number of workers is not specified, set it to the number of CPUs
@@ -43,48 +46,55 @@ class CallbackHandler(object):
         self.skipped_tasks = 0
 
     def run_callback(self, *args, **kwargs):
-        #log.debug('Starting task for file: %s', out_dict['clean_fn'])
-        log.debug('Starting task')
+        # log.debug('Starting task for file: %s', out_dict['clean_fn'])
+        log.debug("Starting task")
         self.launched_tasks = self.launched_tasks + 1
-        print('Starting task ' + str(self.launched_tasks))
-        worker_params = dict(args=args,
-                             kwargs=kwargs)
-        self.worker_pool.apply_async(_callback_worker_func, [worker_params],
-                                     callback=self._dec_task_count_completed)
+        print("Starting task " + str(self.launched_tasks))
+        worker_params = dict(args=args, kwargs=kwargs)
+        self.worker_pool.apply_async(
+            _callback_worker_func,
+            [worker_params],
+            callback=self._dec_task_count_completed,
+        )
 
     def skip(self):
-        log.debug('Skipping task')
+        log.debug("Skipping task")
         self.skipped_tasks = self.skipped_tasks + 1
-        print('Skipping task ' + str(self.skipped_tasks))
+        print("Skipping task " + str(self.skipped_tasks))
         self._dec_task_count_skipped()
 
     def join(self):
         # waiting for all tasks to complete
-        log.debug('Waiting all tasks to be completed...')
+        log.debug("Waiting all tasks to be completed...")
         print("Waiting for all tasks to be completed...")
         while self.task_count > 0:
             pass
         self.worker_pool.close()
         self.worker_pool.join()
-        log.debug('All tasks completed!')
+        log.debug("All tasks completed!")
         print("All tasks completed!")
 
     def terminate(self):
-        log.debug('Terminating workers early...')
+        log.debug("Terminating workers early...")
         print("terminating workers early...")
         self.worker_pool.terminate()
         self.worker_pool.join()
-        log.debug('Done terminating!')
-        print('Done terminating!')
+        log.debug("Done terminating!")
+        print("Done terminating!")
 
     def _dec_task_count_completed(self, retval):
         self.task_count = self.task_count - 1
-        log.debug('Completed post-computation, remaining tasks: %d', self.task_count)
+        log.debug(
+            "Completed post-computation, remaining tasks: %d", self.task_count
+        )
 
     def _dec_task_count_skipped(self):
         self.task_count = self.task_count - 1
-        log.debug('Skipped post-computation, remaining tasks: %d', self.task_count)
+        log.debug(
+            "Skipped post-computation, remaining tasks: %d", self.task_count
+        )
+
 
 def _callback_worker_func(self, worker_params):
-    worker_func(*worker_params['args'], **worker_params['kwargs'])
-    print('Done with callback!')
+    worker_func(*worker_params["args"], **worker_params["kwargs"])
+    print("Done with callback!")

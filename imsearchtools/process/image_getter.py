@@ -7,25 +7,31 @@ Author: Ken Chatfield <ken@robots.ox.ac.uk>
 Created on: 19 Oct 2012
 """
 
-import shutil
-import os
-import time
 import logging
+import os
+import shutil
+import time
 from http.client import BadStatusLine
-import requests
 
 import gevent
-from gevent.timeout import Timeout
+import requests
 from gevent import monkey
+from gevent.timeout import Timeout
+
+from imsearchtools.process import callback_handler
+
+from . import imutils
+from .image_processor import *
+
+
 monkey.patch_socket()
 
-from .image_processor import *
-from . import imutils
-from imsearchtools.process import callback_handler
-#from callback_handler import CallbackHandler
 
-#logging.basicConfig(level=logging.INFO)
+# from callback_handler import CallbackHandler
+
+# logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
+
 
 class ImageGetter(ImageProcessor):
     """Class for downloading cleaned-up images from the web, given a set of URLs
@@ -38,56 +44,71 @@ class ImageGetter(ImageProcessor):
     Cleaned-up versions of the image, along with thumbnails, will be output.
     """
 
-    def __init__(self, timeout=5.0, image_timeout=1.0, opts=ImageProcessorSettings()):
+    def __init__(
+        self, timeout=5.0, image_timeout=1.0, opts=ImageProcessorSettings()
+    ):
         self.opts = opts
         self.timeout = timeout
         self.image_timeout = image_timeout
         self.subprocs = []
 
-    def process_url(self, urldata, output_dir, call_completion_func=False,
-                    completion_extra_prms=None, start_time=0, process_images=True):
+    def process_url(
+        self,
+        urldata,
+        output_dir,
+        call_completion_func=False,
+        completion_extra_prms=None,
+        start_time=0,
+        process_images=True,
+    ):
         error_occurred = False
         try:
-            output_fn = os.path.join(output_dir, self._filename_from_urldata(urldata))
-            self._download_image(urldata['url'], output_fn)
+            output_fn = os.path.join(
+                output_dir, self._filename_from_urldata(urldata)
+            )
+            self._download_image(urldata["url"], output_fn)
             if process_images:
                 clean_fn, thumb_fn = self.process_image(output_fn)
             else:
                 clean_fn = None
                 thumb_fn = None
         except requests.ConnectionError as e:
-            log.info('Connection Error for %s (%s)', urldata['url'], str(e))
+            log.info("Connection Error for %s (%s)", urldata["url"], str(e))
             error_occurred = True
         except requests.HTTPError as e:
             if e.code != 201:
-                log.info('HTTP Error for %s (%s)', urldata['url'], str(e))
+                log.info("HTTP Error for %s (%s)", urldata["url"], str(e))
                 error_occurred = True
         except BadStatusLine as e:
-            log.info('Bad status line for %s (%s)', urldata['url'], str(e))
+            log.info("Bad status line for %s (%s)", urldata["url"], str(e))
             error_occurred = True
         except IOError as e:
-            log.info('IO Error for: %s (%s)', urldata['url'], str(e))
+            log.info("IO Error for: %s (%s)", urldata["url"], str(e))
             error_occurred = True
         except FilterException as e:
-            log.info('Filtered out: %s (%s)', urldata['url'], str(e))
+            log.info("Filtered out: %s (%s)", urldata["url"], str(e))
             error_occurred = True
 
         if not error_occurred:
             out_dict = urldata
-            out_dict['orig_fn'] = output_fn
-            out_dict['clean_fn'] = clean_fn
-            out_dict['thumb_fn'] = thumb_fn
+            out_dict["orig_fn"] = output_fn
+            out_dict["clean_fn"] = clean_fn
+            out_dict["thumb_fn"] = thumb_fn
             if start_time > 0:
-                out_dict['download_time'] = time.time() - start_time
+                out_dict["download_time"] = time.time() - start_time
 
             if call_completion_func:
                 # use callback handler to run completion func configured in process_urls
                 if completion_extra_prms:
-                    self._callback_handler.run_callback(out_dict, completion_extra_prms, blocking=True)
+                    self._callback_handler.run_callback(
+                        out_dict, completion_extra_prms, blocking=True
+                    )
                 else:
-                    self._callback_handler.run_callback(out_dict, blocking=True)
+                    self._callback_handler.run_callback(
+                        out_dict, blocking=True
+                    )
 
-            log.info('done with callback')
+            log.info("done with callback")
             return out_dict
         else:
             if call_completion_func:
@@ -98,25 +119,34 @@ class ImageGetter(ImageProcessor):
 
     def _download_image(self, url, output_fn):
         if imutils.image_exists(output_fn):
-            log.info('Output filename exists for URL: %s', url)
+            log.info("Output filename exists for URL: %s", url)
             return
 
-        log.info('Downloading URL: %s', url)
+        log.info("Downloading URL: %s", url)
         response = None
         try:
-            response = requests.get(url, timeout=self.image_timeout, stream=True)
+            response = requests.get(
+                url, timeout=self.image_timeout, stream=True
+            )
         except Exception as e:
-            log.info('Exception while downloading from %s: %s' % (url, str(e)))
+            log.info("Exception while downloading from %s: %s" % (url, str(e)))
             response = None
         if response:
             try:
-                with open(output_fn, 'wb') as out_file:
+                with open(output_fn, "wb") as out_file:
                     shutil.copyfileobj(response.raw, out_file)
             except Exception as e:
-                log.info('Exception while saving %s: %s' % (output_fn, str(e)))
+                log.info("Exception while saving %s: %s" % (output_fn, str(e)))
 
-    def process_urls(self, urls, output_dir, completion_func=None,
-                     completion_worker_count=-1, completion_extra_prms=None, process_images=True):
+    def process_urls(
+        self,
+        urls,
+        output_dir,
+        completion_func=None,
+        completion_worker_count=-1,
+        completion_extra_prms=None,
+        process_images=True,
+    ):
         """Process returned list of URL dicts returned from search client class
 
         Args:
@@ -141,26 +171,34 @@ class ImageGetter(ImageProcessor):
 
         # check input parameters
         if not urls:
-            raise ValueError('At least one url must be specified for processing')
+            raise ValueError(
+                "At least one url must be specified for processing"
+            )
 
         # prepare workers for callback if using callback function
         # returned process will end once all callbacks have been completed
         if completion_func:
-            self._callback_handler = callback_handler.CallbackHandler(completion_func,
-                                                     len(urls),
-                                                     completion_worker_count)
+            self._callback_handler = callback_handler.CallbackHandler(
+                completion_func, len(urls), completion_worker_count
+            )
 
         # launch main URL processor jobs
-        jobs = [gevent.spawn(self.process_url,
-                             urldata, output_dir,
-                             call_completion_func=(completion_func is not None),
-                             completion_extra_prms=completion_extra_prms, process_images=process_images,
-                             start_time=time.time())
-                for urldata in urls]
+        jobs = [
+            gevent.spawn(
+                self.process_url,
+                urldata,
+                output_dir,
+                call_completion_func=(completion_func is not None),
+                completion_extra_prms=completion_extra_prms,
+                process_images=process_images,
+                start_time=time.time(),
+            )
+            for urldata in urls
+        ]
 
         # wait for all URL processor jobs to complete
         gevent.joinall(jobs, timeout=self.timeout)
-        log.info('all process_url jobs joined!')
+        log.info("all process_url jobs joined!")
 
         # if using callbacks, wait for all callbacks to complete before continuing
         if completion_func:
@@ -182,7 +220,7 @@ class ImageGetter(ImageProcessor):
             if not timeout_occurred:
                 self._callback_handler.join()
             else:
-                log.info('Timeout occurred when processing jobs')
+                log.info("Timeout occurred when processing jobs")
                 self._callback_handler.terminate()
 
         # construct return list of filenames

@@ -25,19 +25,19 @@ Ernesto Coto
 
 # Obtain at:
 # https://datamarket.azure.com/dataset/5BA839F1-12CE-4CCE-BF57-A49D98D29A44
-BING_API_KEY_V1 = ''
-BING_API_KEY_V5 = ''
+BING_API_KEY_V1 = ""
+BING_API_KEY_V5 = ""
 
 # Obtain at:
 # https://developers.google.com/image-search/
-GOOGLE_OLD_API_KEY = ''
+GOOGLE_OLD_API_KEY = ""
 
 # Obtain at:
 # https://developers.google.com/custom-search/v1/overview
-GOOGLE_API_KEY = ''
-GOOGLE_API_CX = ''
+GOOGLE_API_KEY = ""
+GOOGLE_API_CX = ""
 
 # Obtain at:
 # http://www.flickr.com/services/api/
-FLICKR_API_KEY = ''
-FLICKR_API_SECRET = ''
+FLICKR_API_KEY = ""
+FLICKR_API_SECRET = ""

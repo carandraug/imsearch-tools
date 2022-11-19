@@ -7,13 +7,17 @@ Author: Ken Chatfield <ken@robots.ox.ac.uk>
 Created on: 19 Oct 2012
 """
 
+import logging
 import os
 from urllib.parse import urlparse
-import logging
+
 from PIL import Image as PILImage
+
 from . import imutils
 
+
 log = logging.getLogger(__name__)
+
 
 class FilterException(Exception):
     pass
@@ -24,7 +28,7 @@ class ImageProcessorSettings(object):
     Settings class for ImageProcessor
 
     Defines the following setting groups:
-    
+
         filter - settings related to filtering out of images from further processing
         conversion - settings related to the standardization and re-writing of
             downloaded images
@@ -32,27 +36,33 @@ class ImageProcessorSettings(object):
     """
 
     def __init__(self):
-        self.filter = dict(min_width=1,
-                           min_height=1,
-                           max_width=10000,
-                           max_height=10000,
-                           max_size_bytes=2*4*1024*1024,  #2 MP
-                           remove_flickr_placeholders=False)
+        self.filter = dict(
+            min_width=1,
+            min_height=1,
+            max_width=10000,
+            max_height=10000,
+            max_size_bytes=2 * 4 * 1024 * 1024,  # 2 MP
+            remove_flickr_placeholders=False,
+        )
 
-        self.conversion = dict(format='jpg',
-                               suffix='-clean',
-                               max_width=10000,
-                               max_height=10000,
-                               subdir='')
+        self.conversion = dict(
+            format="jpg",
+            suffix="-clean",
+            max_width=10000,
+            max_height=10000,
+            subdir="",
+        )
 
-        self.thumbnail = dict(format='jpg',
-                              suffix='-thumb',
-                              subdir='',
-                              width=90,
-                              height=90,
-                              pad_to_size=True)
+        self.thumbnail = dict(
+            format="jpg",
+            suffix="-thumb",
+            subdir="",
+            width=90,
+            height=90,
+            pad_to_size=True,
+        )
 
-    
+
 class ImageProcessor(object):
     """
     Base class providing utility methods for cleaning up images downloaded
@@ -67,26 +77,32 @@ class ImageProcessor(object):
 
     # Create filenames
     def _filename_from_urldata(self, urldata):
-        extension = os.path.splitext(urlparse(urldata['url']).path)[1]
-        fn = urldata['image_id'] + extension
+        extension = os.path.splitext(urlparse(urldata["url"]).path)[1]
+        fn = urldata["image_id"] + extension
         return fn
 
     def _clean_filename_from_filename(self, fn):
-        clean_fn = (os.path.splitext(fn)[0] +
-                    self.opts.conversion['suffix'] + '.' +
-                    self.opts.conversion['format'].lower())
-        if self.opts.conversion['subdir']:
-            clean_fn = os.path.join(self.opts.conversion['subdir'], clean_fn)
+        clean_fn = (
+            os.path.splitext(fn)[0]
+            + self.opts.conversion["suffix"]
+            + "."
+            + self.opts.conversion["format"].lower()
+        )
+        if self.opts.conversion["subdir"]:
+            clean_fn = os.path.join(self.opts.conversion["subdir"], clean_fn)
         return clean_fn
 
     def _thumb_filename_from_filename(self, fn):
         name = os.path.splitext(fn)[0]
-        suffix = self.opts.thumbnail['suffix']
-        width, height = self.opts.thumbnail['width'], self.opts.thumbnail['height']
-        extension = self.opts.thumbnail['format'].lower()
-        thumb_fn = '%s%s-%dx%d.%s' % (name, suffix, width, height, extension)
-        if self.opts.thumbnail['subdir']:
-            thumb_fn = os.path.join(self.opts.thumbnail['subdir'], thumb_fn)
+        suffix = self.opts.thumbnail["suffix"]
+        width, height = (
+            self.opts.thumbnail["width"],
+            self.opts.thumbnail["height"],
+        )
+        extension = self.opts.thumbnail["format"].lower()
+        thumb_fn = "%s%s-%dx%d.%s" % (name, suffix, width, height, extension)
+        if self.opts.thumbnail["subdir"]:
+            thumb_fn = os.path.join(self.opts.thumbnail["subdir"], thumb_fn)
         return thumb_fn
 
     # Process image and standardize it
@@ -107,24 +123,29 @@ class ImageProcessor(object):
         # write converted version
         clean_fn = self._clean_filename_from_filename(fn)
         if not imutils.image_exists(clean_fn):
-            if self.opts.filter['remove_flickr_placeholders']:
+            if self.opts.filter["remove_flickr_placeholders"]:
                 self._filter_flickr_placeholder(fn)
-            convimg = imutils.downsize_by_max_dims(im.image,
-                                                   (self.opts.conversion['max_height'],
-                                                    self.opts.conversion['max_width']))
+            convimg = imutils.downsize_by_max_dims(
+                im.image,
+                (
+                    self.opts.conversion["max_height"],
+                    self.opts.conversion["max_width"],
+                ),
+            )
             imutils.save_image(clean_fn, convimg)
         else:
-            log.info('Converted image available: %s', clean_fn)
+            log.info("Converted image available: %s", clean_fn)
 
         # write thumbnail
         thumb_fn = self._thumb_filename_from_filename(fn)
         if not imutils.image_exists(thumb_fn):
-            thumbnail = imutils.create_thumbnail(im.image,
-                                                 (self.opts.thumbnail['height'],
-                                                  self.opts.thumbnail['width']))
+            thumbnail = imutils.create_thumbnail(
+                im.image,
+                (self.opts.thumbnail["height"], self.opts.thumbnail["width"]),
+            )
             imutils.save_image(thumb_fn, thumbnail)
         else:
-            log.info('Thumbnail image available: %s', thumb_fn)
+            log.info("Thumbnail image available: %s", thumb_fn)
 
         return clean_fn, thumb_fn
 
@@ -136,19 +157,23 @@ class ImageProcessor(object):
         # This is an in memory size *estimate*
         nbytes = w * h * len(im.mode)
 
-        if w < self.opts.filter['min_width']:
-            raise FilterException('w < min_width')
-        if h < self.opts.filter['min_height']:
-            raise FilterException('h < min_height')
-        if w > self.opts.filter['max_width']:
-            raise FilterException('w > max_width')
-        if h > self.opts.filter['max_height']:
-            raise FilterException('h > max_height')
-        if nbytes > self.opts.filter['max_size_bytes']:
-            raise FilterException('nbytes > max_size_bytes')
+        if w < self.opts.filter["min_width"]:
+            raise FilterException("w < min_width")
+        if h < self.opts.filter["min_height"]:
+            raise FilterException("h < min_height")
+        if w > self.opts.filter["max_width"]:
+            raise FilterException("w > max_width")
+        if h > self.opts.filter["max_height"]:
+            raise FilterException("h > max_height")
+        if nbytes > self.opts.filter["max_size_bytes"]:
+            raise FilterException("nbytes > max_size_bytes")
 
     def _filter_flickr_placeholder(self, fn):
         import hashlib
+
         with open(fn) as fid:
-            if hashlib.sha256(fid.read()).hexdigest() == '0f28f49410a89e24c95acfd345210cc6f2294814584ad7c60f698fee74e46aad':
-                raise FilterException('Flickr placeholder image filtered')
+            if (
+                hashlib.sha256(fid.read()).hexdigest()
+                == "0f28f49410a89e24c95acfd345210cc6f2294814584ad7c60f698fee74e46aad"
+            ):
+                raise FilterException("Flickr placeholder image filtered")
