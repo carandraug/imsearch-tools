@@ -15,17 +15,12 @@ from http.client import BadStatusLine
 
 import gevent
 import requests
-from gevent import monkey
 from gevent.timeout import Timeout
 
 from imsearchtools.process import callback_handler
 
 from . import imutils
 from .image_processor import *
-
-
-monkey.patch_socket()
-
 
 # from callback_handler import CallbackHandler
 
