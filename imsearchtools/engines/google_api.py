@@ -30,7 +30,7 @@ class GoogleAPISearch(requests.Session, SearchClient):
     """
 
     def __init__(self, async_query=True, timeout=5.0, **kwargs):
-        super(GoogleAPISearch, self).__init__()
+        super().__init__()
 
         if not GOOGLE_API_KEY or not GOOGLE_API_CX:
             raise NoAPICredentials(

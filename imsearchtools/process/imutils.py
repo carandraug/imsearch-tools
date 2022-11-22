@@ -60,7 +60,7 @@ def create_thumbnail(im, shape=(128, 128), pad_to_size=True):
     return resized
 
 
-class LazyImage(object):
+class LazyImage:
     def __init__(self, filename):
         self.filename = filename
         self._image = None

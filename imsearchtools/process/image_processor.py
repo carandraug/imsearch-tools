@@ -23,7 +23,7 @@ class FilterException(Exception):
     pass
 
 
-class ImageProcessorSettings(object):
+class ImageProcessorSettings:
     """
     Settings class for ImageProcessor
 
@@ -63,7 +63,7 @@ class ImageProcessorSettings(object):
         )
 
 
-class ImageProcessor(object):
+class ImageProcessor:
     """
     Base class providing utility methods for cleaning up images downloaded
     from the web. Requires the subclass to define the following:

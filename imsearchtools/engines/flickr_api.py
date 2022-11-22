@@ -29,7 +29,7 @@ class FlickrAPISearch(requests.Session, SearchClient):
     """
 
     def __init__(self, async_query=True, timeout=5.0, **kwargs):
-        super(FlickrAPISearch, self).__init__()
+        super().__init__()
 
         if (
             not FLICKR_API_KEY

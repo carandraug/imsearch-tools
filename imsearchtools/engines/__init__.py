@@ -15,7 +15,7 @@ class NoAPICredentials(Exception):
 #  --------------------------------------------
 
 
-class SearchClient(object):
+class SearchClient:
     """
     Base class for all search clients, providing utility methods common
     to all classes. Requires the subclass to define the following:

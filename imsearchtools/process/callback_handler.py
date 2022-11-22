@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 # log.setLevel(logging.DEBUG)
 
 
-class CallbackHandler(object):
+class CallbackHandler:
     """Class for wrapping callbacks
 
     Initializer Args:

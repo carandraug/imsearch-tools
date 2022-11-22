@@ -7,7 +7,7 @@ import requests
 from imsearchtools.engines.bing_api_v5 import BingAPISearchV5
 
 
-class TestBingAPI(object):
+class TestBingAPI:
     def setup(self):
         self._gws = BingAPISearchV5(False)
         self._q = "polka dots"

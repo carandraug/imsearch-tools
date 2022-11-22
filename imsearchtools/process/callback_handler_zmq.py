@@ -50,7 +50,7 @@ ZMQ_CONTROL_DONE = "FINISHED"
 ZMQ_CONTROL_SYNC = "INITIALIZED"
 
 
-class CallbackHandler(object):
+class CallbackHandler:
     """Class for wrapping callbacks using ZMQ
 
     Initializer Args:
@@ -132,7 +132,7 @@ class CallbackHandler(object):
         log.debug("Done terminating!")
 
 
-class CallbackTaskRunner(object):
+class CallbackTaskRunner:
     """Class used internally by CallbackHandler to launch tasks"""
 
     def __init__(self):
@@ -167,7 +167,7 @@ class CallbackTaskRunner(object):
         self.tcdec_sender.send(ZMQ_RESULT_SKIPPING)
 
 
-class CallbackTaskWorkers(object):
+class CallbackTaskWorkers:
     """Class used internally by CallbackHandler to launch a pool of workers"""
 
     def __init__(self, worker_func, worker_count):

@@ -7,7 +7,7 @@ import requests
 from imsearchtools.engines.google_web import GoogleWebSearch
 
 
-class TestGoogleWeb(object):
+class TestGoogleWeb:
     def setup(self):
         self._gws = GoogleWebSearch(False)
         self._q = "polka dots"

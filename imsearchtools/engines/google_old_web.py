@@ -30,7 +30,7 @@ class GoogleOldWebSearch(requests.Session, SearchClient):
     """
 
     def __init__(self, async_query=True, timeout=5.0, **kwargs):
-        super(GoogleOldWebSearch, self).__init__()
+        super().__init__()
 
         self.headers.update(kwargs)
         self.timeout = timeout

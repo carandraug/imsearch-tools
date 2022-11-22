@@ -25,7 +25,7 @@ class BingAPISearchV5(requests.Session, SearchClient):
     """
 
     def __init__(self, async_query=True, timeout=5.0, **kwargs):
-        super(BingAPISearchV5, self).__init__()
+        super().__init__()
 
         if not BING_API_KEY_V5:
             raise NoAPICredentials(

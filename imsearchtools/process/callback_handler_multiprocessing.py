@@ -14,7 +14,7 @@ import multiprocessing
 log = logging.getLogger(__name__)
 
 
-class CallbackHandler(object):
+class CallbackHandler:
     """Class for wrapping callbacks using ZMQ
 
     Initializer Args:
