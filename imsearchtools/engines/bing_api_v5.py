@@ -1,15 +1,10 @@
 #!/usr/bin/env python
 
+import json
 import requests
 
 from .api_credentials import *
 from .search_client import *
-
-
-try:
-    import simplejson as json
-except ImportError:
-    import json  # Python 2.6+ only
 
 
 ## API Configuration
