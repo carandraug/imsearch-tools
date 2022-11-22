@@ -4,7 +4,12 @@ import os
 import sys
 import time
 
-from imsearchtools import query as image_query
+from imsearchtools.engines.bing_api_v1 import BingAPISearchV1
+from imsearchtools.engines.bing_api_v5 import BingAPISearchV5
+from imsearchtools.engines.flickr_api import FlickrAPISearch
+from imsearchtools.engines.google_api import GoogleAPISearch
+from imsearchtools.engines.google_old_api import GoogleOldAPISearch
+from imsearchtools.engines.google_web import GoogleWebSearch
 from imsearchtools.utils import result_page_gen
 
 
@@ -32,7 +37,7 @@ all_results = []
 all_generator_names = []
 
 if test_bing_api_v1:
-    bing_api_searcher = image_query.BingAPISearchV1()
+    bing_api_searcher = BingAPISearchV1()
     print("Executing Bing API Search V1...")
     t = time.time()
     bing_api_results = bing_api_searcher.query(
@@ -55,7 +60,7 @@ if test_bing_api_v1:
     all_generator_names.append("BingAPISearchV1()")
 
 if test_bing_api_v5:
-    bing_api_searcher = image_query.BingAPISearchV5()
+    bing_api_searcher = BingAPISearchV5()
     print("Executing Bing API Search V5...")
     t = time.time()
     bing_api_results = bing_api_searcher.query(test_query_str)
@@ -76,7 +81,7 @@ if test_bing_api_v5:
     all_generator_names.append("BingAPISearchV5()")
 
 if test_google_old_api:
-    google_old_api_searcher = image_query.GoogleOldAPISearch()
+    google_old_api_searcher = GoogleOldAPISearch()
     print("Executing Google API Search (Old)...")
     t = time.time()
     google_old_api_results = google_old_api_searcher.query(
@@ -99,7 +104,7 @@ if test_google_old_api:
     all_generator_names.append("GoogleOldAPISearch()")
 
 if test_google_api:
-    google_api_searcher = image_query.GoogleAPISearch()
+    google_api_searcher = GoogleAPISearch()
     print("Executing Google API Search (Custom Search)...")
     t = time.time()
     google_api_results = google_api_searcher.query(
@@ -122,7 +127,7 @@ if test_google_api:
     all_generator_names.append("GoogleAPISearch()")
 
 if test_google_web:
-    google_web_searcher = image_query.GoogleWebSearch()
+    google_web_searcher = GoogleWebSearch()
     print("Executing Google Web Search...")
     t = time.time()
     google_web_results = google_web_searcher.query(
@@ -146,7 +151,7 @@ if test_google_web:
 
 
 if test_flickr_api:
-    flickr_api_searcher = image_query.FlickrAPISearch()
+    flickr_api_searcher = FlickrAPISearch()
     print("Executing Flickr API Search...")
     t = time.time()
     flickr_api_results = flickr_api_searcher.query(
