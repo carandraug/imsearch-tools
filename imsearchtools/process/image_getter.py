@@ -17,12 +17,13 @@ import gevent
 import requests
 from gevent.timeout import Timeout
 
-from imsearchtools.process import callback_handler
+from imsearchtools.process import callback_handler, imutils
+from imsearchtools.process.image_processor import (
+    FilterException,
+    ImageProcessor,
+    ImageProcessorSettings,
+)
 
-from . import imutils
-from .image_processor import *
-
-# from callback_handler import CallbackHandler
 
 # logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)

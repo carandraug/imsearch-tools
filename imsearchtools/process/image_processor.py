@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 
 from PIL import Image as PILImage
 
-from . import imutils
+from imsearchtools.process import imutils
 
 
 log = logging.getLogger(__name__)

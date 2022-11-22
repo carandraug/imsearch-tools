@@ -4,16 +4,12 @@ import sys
 
 import requests
 
-from imsearchtools.engines import google_web as image_query
-
-
-FILE_DIR = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(os.path.join(FILE_DIR, ".."))
+from imsearchtools.engines.google_web import GoogleWebSearch
 
 
 class TestGoogleWeb(object):
     def setup(self):
-        self._gws = image_query.GoogleWebSearch(False)
+        self._gws = GoogleWebSearch(False)
         self._q = "polka dots"
 
     def test_images_returned(self):

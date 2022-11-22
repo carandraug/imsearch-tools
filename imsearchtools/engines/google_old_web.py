@@ -5,8 +5,7 @@ from hashlib import md5
 
 import requests
 
-from .api_credentials import *
-from .search_client import *
+from imsearchtools.engines.search_client import SearchClient
 
 
 ## API Configuration

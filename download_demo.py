@@ -4,7 +4,8 @@ import os
 import sys
 import time
 
-import imsearchtools as ist
+from imsearchtools.engines.google_web import GoogleWebSearch
+from imsearchtools.process.image_getter import ImageGetter
 
 
 # demo callback that simply prints a json object
@@ -23,7 +24,7 @@ else:
     test_query_str = sys.argv[1]
 
 # example of querying for image URLs using Google Web engine
-searcher = ist.query.GoogleWebSearch()
+searcher = GoogleWebSearch()
 print("Executing Google Web Search...")
 t = time.time()
 results = searcher.query(test_query_str)
@@ -38,7 +39,7 @@ if not os.path.isdir(outdir):
     os.makedirs(outdir)
 
 # example of downloading images from a query engine
-imgetter = ist.process.ImageGetter()
+imgetter = ImageGetter()
 print("Downloading images...")
 t = time.time()
 # - A demo callback 'test_callback' is provided. If not required, the parameter can simply be removed

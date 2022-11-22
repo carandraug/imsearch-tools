@@ -5,8 +5,8 @@ from hashlib import md5
 
 import requests
 
-from .api_credentials import *
-from .search_client import *
+from imsearchtools.engines.api_credentials import BING_API_KEY_V1
+from imsearchtools.engines.search_client import NoAPICredentials, SearchClient
 
 
 ## API Configuration

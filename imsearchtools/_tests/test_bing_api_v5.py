@@ -4,16 +4,12 @@ import sys
 
 import requests
 
-from imsearchtools import query as image_query
-
-
-file_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(os.path.join(file_dir, "..", "..", "imsearch-tools"))
+from imsearchtools.engines.bing_api_v5 import BingAPISearchV5
 
 
 class TestBingAPI(object):
     def setup(self):
-        self._gws = image_query.BingAPISearchV5(False)
+        self._gws = BingAPISearchV5(False)
         self._q = "polka dots"
 
     def test_query(self):

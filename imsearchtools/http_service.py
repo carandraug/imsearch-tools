@@ -7,7 +7,11 @@ import sys
 from flask import Flask, Response, json, request
 from gevent.pywsgi import WSGIServer
 
-from imsearchtools import query as image_query
+from imsearchtools.engines.bing_api_v5 import BingAPISearchV5
+from imsearchtools.engines.flickr_api import FlickrAPISearch
+from imsearchtools.engines.google_api import GoogleAPISearch
+from imsearchtools.engines.google_old_api import GoogleOldAPISearch
+from imsearchtools.engines.google_web import GoogleWebSearch
 from imsearchtools.postproc_modules import module_finder
 from imsearchtools.process import (
     callback_handler,
@@ -40,15 +44,15 @@ def imsearch_query(query, engine, query_params, query_timeout=-1.0):
         searcher_args["timeout"] = query_timeout
     # initialize searcher
     if engine == "bing_api":
-        searcher = image_query.BingAPISearchV5(**searcher_args)
+        searcher = BingAPISearchV5(**searcher_args)
     elif engine == "google_old_api":
-        searcher = image_query.GoogleOldAPISearch(**searcher_args)
+        searcher = GoogleOldAPISearch(**searcher_args)
     elif engine == "google_api":
-        searcher = image_query.GoogleAPISearch(**searcher_args)
+        searcher = GoogleAPISearch(**searcher_args)
     elif engine == "google_web":
-        searcher = image_query.GoogleWebSearch(**searcher_args)
+        searcher = GoogleWebSearch(**searcher_args)
     elif engine == "flickr_api":
-        searcher = image_query.FlickrAPISearch(**searcher_args)
+        searcher = FlickrAPISearch(**searcher_args)
     else:
         raise ValueError("Unknown query engine")
     # execute the query

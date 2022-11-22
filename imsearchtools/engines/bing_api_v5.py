@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 import json
+
 import requests
 
-from .api_credentials import *
-from .search_client import *
+from imsearchtools.engines.api_credentials import BING_API_KEY_V5
+from imsearchtools.engines.search_client import NoAPICredentials, SearchClient
 
 
 ## API Configuration
