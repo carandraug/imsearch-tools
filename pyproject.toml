@@ -26,9 +26,19 @@ dependencies = [
     "pyzmq>=14.3.1",
 ]
 
+
+[build.system]
+requires = ["setuptools"]
+
+
+[tool.setuptools]
+packages = ["imsearchtools"]
+
+
 [tool.black]
 line-length = 79
 target-version = ['py37']
+
 
 [tool.isort]
 profile = "black"
@@ -42,11 +52,13 @@ combine_as_imports = true
 include_trailing_comma = true
 multi_line_output = 3  # multi lineoutput 3 is vert-hanging
 
+
 [tool.pylint.messages_control]
 # Disable these Convention messages because that's Black style.
 # C0326: Bad whitespace
 # C0330: Wrong hanging indentation before block (add 4 spaces)
 disable = "C0326, C0330"
+
 
 [tool.pylint.FORMAT]
 max-line-length = 79
