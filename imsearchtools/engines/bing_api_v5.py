@@ -4,8 +4,8 @@ import json
 
 import requests
 
+from imsearchtools.engines import NoAPICredentials, SearchClient
 from imsearchtools.engines.api_credentials import BING_API_KEY_V5
-from imsearchtools.engines.search_client import NoAPICredentials, SearchClient
 
 
 ## API Configuration

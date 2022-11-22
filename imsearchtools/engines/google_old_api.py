@@ -4,8 +4,8 @@ from hashlib import md5
 
 import requests
 
+from imsearchtools.engines import NoAPICredentials, SearchClient
 from imsearchtools.engines.api_credentials import GOOGLE_OLD_API_KEY
-from imsearchtools.engines.search_client import NoAPICredentials, SearchClient
 
 
 ## API Configuration
