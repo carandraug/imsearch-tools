@@ -25,6 +25,15 @@ class GoogleWebSearch(requests.Session, SearchClient):
 
     This class does not use any API, but instead extracts results directly from the
     web search pages (acting as Firefox).
+
+    This appears to be broken since October 2023.  While the query
+    itself is successful, the returned page no longer includes a link
+    to the high resolution image.  Instead, we have links to a page
+    where the image should be.  We also have the low resolution images
+    displayed on the web page with the search results.  The high
+    resolution images displayed on the Web page results, is only
+    displayed after clicking the thumbnail and its path seems to be
+    retrieved wit some JavaScript.
     """
 
     def __init__(self, async_query=True, timeout=5.0, **kwargs):
