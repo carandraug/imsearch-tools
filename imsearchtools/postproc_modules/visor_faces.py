@@ -13,7 +13,6 @@ TCP_TIMEOUT = 86400.00
 
 
 def callback_func(out_dict, extra_prms=None):
-
     # connect to VISOR backend service
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:

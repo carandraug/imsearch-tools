@@ -92,7 +92,7 @@ class BingAPISearchV1(requests.Session, SearchClient):
         return [
             {
                 "url": item["MediaUrl"],
-                "image_id": md5(item["ID"]).hexdigest(),
+                "image_id": md5(item["ID"].encode("utf-8")).hexdigest(),
                 "title": item["Title"],
             }
             for item in results

@@ -86,7 +86,7 @@ class GoogleOldAPISearch(requests.Session, SearchClient):
         return [
             {
                 "url": item["unescapedUrl"],
-                "image_id": md5(item["imageId"]).hexdigest(),
+                "image_id": md5(item["imageId"].encode("utf-8")).hexdigest(),
                 "title": item["titleNoFormatting"],
             }
             for item in results

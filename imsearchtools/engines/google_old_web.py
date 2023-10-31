@@ -74,7 +74,10 @@ class GoogleOldWebSearch(requests.Session, SearchClient):
             ]
 
             resp_dict = [
-                {"url": item[0], "image_id": md5(item[1]).hexdigest()}
+                {
+                    "url": item[0],
+                    "image_id": md5(item[1].encode("utf-8")).hexdigest(),
+                }
                 for item in zip(image_urls, image_ids)
             ]
 

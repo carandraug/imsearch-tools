@@ -105,7 +105,7 @@ class FlickrAPISearch(requests.Session, SearchClient):
                     item["secret"],
                     size,
                 ),
-                "image_id": md5(item["id"]).hexdigest(),
+                "image_id": md5(item["id"].encode("utf-8")).hexdigest(),
                 "title": item["title"],
             }
             for item in results

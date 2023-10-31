@@ -89,7 +89,7 @@ class GoogleAPISearch(requests.Session, SearchClient):
         return [
             {
                 "url": item["link"],
-                "image_id": md5(item["link"]).hexdigest(),
+                "image_id": md5(item["link"].encode("utf-8")).hexdigest(),
                 "title": item["title"],
             }
             for item in results

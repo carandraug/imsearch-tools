@@ -55,7 +55,6 @@ class GoogleWebSearch(requests.Session, SearchClient):
     def _fetch_results_from_offset(
         self, query, result_offset, aux_params={}, headers={}, num_results=-1
     ):
-
         try:
             page_idx = int(
                 math.floor(result_offset / float(self._results_per_req))

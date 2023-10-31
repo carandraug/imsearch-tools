@@ -171,7 +171,6 @@ class CallbackTaskWorkers:
     """Class used internally by CallbackHandler to launch a pool of workers"""
 
     def __init__(self, worker_func, worker_count):
-
         self.workers = [None] * worker_count
         for wrk_num in range(worker_count):
             if PROC_TYPE == ProcType.gipc:
