@@ -1,0 +1,14 @@
+Dockerfile
+.dockerignore
+download_demo.py
+query_demo.py
+utils/
+
+.gitignore
+.git/
+
+# demos and testing may generate these directories
+demos/
+static/
+
+venv/
