@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import logging
 import os
 import sys
@@ -320,10 +321,16 @@ def exec_pipeline():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        SERVER_PORT = int(sys.argv[1])
-    else:
-        SERVER_PORT = DEFAULT_SERVER_PORT
-    print("Starting imsearch_http_service on port", SERVER_PORT)
-    http_server = WSGIServer(("", SERVER_PORT), app)
+    argv_parser = argparse.ArgumentParser()
+    argv_parser.add_argument(
+        "port",
+        type=int,
+        default=DEFAULT_SERVER_PORT,
+        nargs="?",
+        help="bind to this port (default: %(default)s)",
+    )
+    args = argv_parser.parse_args(sys.argv[1:])
+
+    print("Starting imsearch_http_service on port", args.port)
+    http_server = WSGIServer(("", args.port), app)
     http_server.serve_forever()
