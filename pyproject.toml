@@ -32,7 +32,14 @@ requires = ["setuptools"]
 
 
 [tool.setuptools]
-packages = ["imsearchtools"]
+packages = [
+    "imsearchtools",
+    "imsearchtools.engines",
+    "imsearchtools.postproc_modules",
+    "imsearchtools.process",
+    "imsearchtools._tests",
+    "imsearchtools.utils",
+]
 
 
 [tool.black]
