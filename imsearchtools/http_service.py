@@ -6,6 +6,7 @@ import os
 import os.path
 import sys
 import time
+from typing import List
 
 from flask import Flask, Response, json, request
 from gevent.pywsgi import WSGIServer
@@ -319,7 +320,7 @@ def exec_pipeline():
     return Response("DONE", mimetype="text/plain")
 
 
-if __name__ == "__main__":
+def main(aergv: List[str]) -> int:
     logging.basicConfig(
         format="%(asctime)s %(levelname)s:%(message)s", level=logging.INFO
     )
@@ -355,3 +356,9 @@ if __name__ == "__main__":
     _logger.info("Starting imsearch_http_service on port %d", args.port)
     http_server = WSGIServer(("", args.port), app)
     http_server.serve_forever()
+    # TODO: how to exit clean from serve_forever?
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
