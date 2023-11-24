@@ -142,7 +142,7 @@ def gen_results_page(
         single_res_code = single_res_code.replace(
             "<!-- RESULT_URL -->", result["url"]
         )
-        if result.has_key("title"):
+        if "title" in result:
             single_res_code = single_res_code.replace(
                 "<!-- RESULT_TITLE -->", result["title"]
             )
@@ -155,7 +155,7 @@ def gen_results_page(
     result_page = result_page.replace("<!-- RESULTS -->", result_grid_code)
 
     output = open(output_filename, "w")
-    output.write(result_page.encode("UTF-8"))
+    output.write(result_page)
     output.close()
 
     if show_in_browser:
@@ -186,7 +186,7 @@ def combine_results_pages(
             single_res_code = single_res_code.replace(
                 "<!-- RESULT_URL -->", result["url"]
             )
-            if result.has_key("title"):
+            if "title" in result:
                 single_res_code = single_res_code.replace(
                     "<!-- RESULT_TITLE -->", result["title"]
                 )
@@ -216,7 +216,7 @@ def combine_results_pages(
     )
 
     output = open(output_filename, "w")
-    output.write(combined_page.encode("UTF-8"))
+    output.write(combined_page)
     output.close()
 
     if show_in_browser:
