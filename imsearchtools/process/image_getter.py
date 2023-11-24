@@ -135,7 +135,8 @@ class ImageGetter(ImageProcessor):
         if response:
             try:
                 with open(output_fn, "wb") as out_file:
-                    shutil.copyfileobj(response.raw, out_file)
+                    for chunk in response.iter_content(chunk_size=None):
+                        out_file.write(chunk)
             except Exception as e:
                 log.info("Exception while saving %s: %s" % (output_fn, str(e)))
 
