@@ -329,8 +329,8 @@ if __name__ == "__main__":
     argv_parser = argparse.ArgumentParser()
     argv_parser.add_argument(
         "--base-dir",
-        default=os.getcwd(),
-        help="save results relative to this directory (default: current directory)",
+        default="/var/lib/imsearch-tools",
+        help="save results relative to this directory (default: %(default)s)",
     )
     argv_parser.add_argument(
         "port",
