@@ -71,24 +71,13 @@ def imsearch_download_to_static(
     # prepare extra parameters if required
     ig_params = dict()
     if imgetter_params:
-        if (
-            "improc_timeout" in imgetter_params
-            and imgetter_params["improc_timeout"] > 0.0
-        ):
+        if imgetter_params["improc_timeout"] > 0.0:
             ig_params["timeout"] = imgetter_params["improc_timeout"]
-        if (
-            "per_image_timeout" in imgetter_params
-            and imgetter_params["per_image_timeout"] > 0.0
-        ):
+        if imgetter_params["per_image_timeout"] > 0.0:
             ig_params["image_timeout"] = imgetter_params["per_image_timeout"]
-        do_width_resize = (
-            "resize_width" in imgetter_params
-            and imgetter_params["resize_width"] > 0
-        )
-        do_height_resize = (
-            "resize_height" in imgetter_params
-            and imgetter_params["resize_height"] > 0
-        )
+
+        do_width_resize = imgetter_params["resize_width"] > 0
+        do_height_resize = imgetter_params["resize_height"] > 0
         if do_width_resize or do_height_resize:
             improc_settings = image_processor.ImageProcessorSettings()
             if do_width_resize:
@@ -284,24 +273,26 @@ def exec_pipeline():
     )
     # query_res_list = query_res_list[:5] # DEBUG CODE
     # prepare download params
-    imgetter_params = dict()
+    imgetter_params = {
+        "improc_timeout": -1,  # no timeout (default)
+        "per_image_timeout": -1,  # no timeout (default)
+        "resize_width": -1,  # no resize (default)
+        "resize_height": -1,  # no resize (default)
+    }
     for param_nm in ["improc_timeout", "per_image_timeout"]:
         if param_nm in request.form:
             imgetter_params[param_nm] = float(request.form[param_nm])
     for param_nm in ["resize_width", "resize_height"]:
         if param_nm in request.form:
             imgetter_params[param_nm] = int(request.form[param_nm])
+
     # download images
     print(
         "Downloading for %s started: %d sec improc_timeout, %d sec per_image_timeout"
         % (
             query_text,
-            imgetter_params["improc_timeout"]
-            if imgetter_params["improc_timeout"]
-            else -1,
-            imgetter_params["per_image_timeout"]
-            if imgetter_params["per_image_timeout"]
-            else -1,
+            imgetter_params["improc_timeout"],
+            imgetter_params["per_image_timeout"],
         )
     )
     dfiles_list = imsearch_download_to_static(
