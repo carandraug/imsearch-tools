@@ -14,116 +14,115 @@ import os.path
 
 
 RESULT_PAGE_HTML = """
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Search Result Visualization</title>
-<style>
-  #result_container {
-
-  }
-  #result_container:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-  }
-  .result {
-    float: left;
-                padding: 5px;
-  }
-  .result img {
-    height: 130px;
-  }
-</style>
-</head>
-
-<body>
-  <dl>
-    <dt>Generator:</dt>
-    <dd><!-- GENERATOR --></dd>
-    <dt>Images returned:</dt>
-    <dd><!-- IMAGE_COUNT --></dd>
-  </dl>
-  <div id="result_container">
-    <!-- RESULTS -->
-  </div>
-</body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Result Visualization</title>
+    <title>Search Result Visualization</title>
+    <style>
+      #result_container {
+      }
+      #result_container:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: both;
+        visibility: hidden;
+      }
+      .result {
+        float: left;
+        padding: 5px;
+      }
+      .result img {
+        height: 130px;
+      }
+    </style>
+  </head>
+  <body>
+    <dl>
+      <dt>Generator:</dt>
+      <dd><!-- GENERATOR --></dd>
+      <dt>Images returned:</dt>
+      <dd><!-- IMAGE_COUNT --></dd>
+    </dl>
+    <div id="result_container">
+      <!-- RESULTS -->
+    </div>
+  </body>
 </html>
 """
 
 RESULT_HTML = """
-    <div class="result">
-      <img src="<!-- RESULT_URL -->" alt="<!-- RESULT_TITLE -->" />
-    </div>
+      <div class="result">
+        <img src="<!-- RESULT_URL -->" alt="<!-- RESULT_TITLE -->" />
+      </div>
 """
 
 COMBINED_RESULT_PAGE_HTML = """
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Search Result Visualization</title>
-<style>
-  #result_frames_container {
-
-  }
-  #result_frames_container>div {
-    display: block;
-    float: left;
-    width: 200px;
-    padding: 5px;
-    border: 1px solid black;
-  }
-  #result_frames_container:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-  }
-  .result_img_container {
-    height: 250px;
-  }
-  .result_img {
-    max-width: 190px;
-    max-height: 200px;
-  }
-</style>
-<script src="http://code.jquery.com/jquery-latest.js"></script>
-</head>
-
-<body>
-  <div id="result_frames_container">
-    <!-- RESULT_FRAMES -->
-  </div>
-</body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Result Visualization</title>
+    <style>
+      #result_frames_container {
+      }
+      #result_frames_container>div {
+        display: block;
+        float: left;
+        width: 200px;
+        padding: 5px;
+        border: 1px solid black;
+      }
+      #result_frames_container:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: both;
+        visibility: hidden;
+      }
+      .result_img_container {
+        height: 250px;
+      }
+      .result_img {
+        max-width: 190px;
+        max-height: 200px;
+      }
+    </style>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+  </head>
+  <body>
+    <div id="result_frames_container">
+      <!-- RESULT_FRAMES -->
+    </div>
+  </body>
 </html>
 """
 
 RESULT_FRAME_HTML = """
-    <div>
-      <!-- RESULT_FRAME_HEADER -->
-      <!-- RESULTS -->
-    </div>
+      <div>
+        <!-- RESULT_FRAME_HEADER -->
+        <!-- RESULTS -->
+      </div>
 """
 
 RESULT_FRAME_HEADER_HTML = """
-      <dl>
-        <dt>Generator:</dt>
-        <dd><!-- GENERATOR --></dd>
-        <dt>Images returned:</dt>
-        <dd><!-- IMAGE_COUNT --></dd>
-      </dl>
+        <dl>
+          <dt>Generator:</dt>
+          <dd><!-- GENERATOR --></dd>
+          <dt>Images returned:</dt>
+          <dd><!-- IMAGE_COUNT --></dd>
+        </dl>
 """
 
 RESULT_IN_FRAME_HTML = """
-      <div class="result_img_container">
-        <!-- RESULT_IDX -->
-        <img class="result_img" src="<!-- RESULT_URL -->" alt="<!-- RESULT_TITLE -->" />
-      </div>
+        <div class="result_img_container">
+          <!-- RESULT_IDX -->
+          <img class="result_img" src="<!-- RESULT_URL -->" alt="<!-- RESULT_TITLE -->" />
+        </div>
 """
 
 
