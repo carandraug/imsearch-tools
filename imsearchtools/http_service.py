@@ -6,6 +6,7 @@ import logging
 import operator
 import os
 import os.path
+import signal
 import sys
 import time
 from typing import Any, Dict, List
@@ -431,8 +432,20 @@ def main(aergv: List[str]) -> int:
 
     _logger.info("Starting imsearch_http_service on port %d", args.port)
     http_server = WSGIServer(("", args.port), app)
-    http_server.serve_forever()
-    # TODO: how to exit clean from serve_forever?
+
+    if sys.platform != "win32":
+        # Catch Ctrl+C/sigkill/sigterm for a clean exit or it will
+        # raise a KeyboardInterrupt and exits with an error code.
+        signal.signal(signal.SIGTERM, lambda sig, frame: http_server.stop())
+        signal.signal(signal.SIGINT, lambda sig, frame: http_server.stop())
+        http_server.serve_forever()
+    else:
+        # Not sure how signals work in Windows, so we do this instead.
+        try:
+            http_server.serve_forever()
+        except KeyboardInterrupt:
+            http_server.stop()
+
     return 0
 
 
