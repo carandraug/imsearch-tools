@@ -56,10 +56,6 @@ Currently the following search services are supported:
        `GoogleAPISearch()`
      - Details and authentication key available at:
        <https://developers.google.com/custom-search/v1/overview/>
- + **BingAPISearchV1 ( )** – Image search using Bing, using the *Bing Search API V1*
-     - **The *Bing Search API V1* is now deprecated**
-     - Details and authentication key available at:
-       <http://www.bing.com/developers/>
  + **BingAPISearchV5 ( )** – Image search using Bing, using the *Bing Search API V5*
      - Authentication key available at: <https://www.microsoft.com/cognitive-services/en-us/subscriptions>
      - Image Search API Reference at: <https://msdn.microsoft.com/en-us/library/dn760791(v=bsynd.50).aspx>

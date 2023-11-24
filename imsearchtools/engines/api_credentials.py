@@ -21,6 +21,10 @@ Ernesto Coto
 Removed GOOGLE_OLD_API_KEY since Google removed it back in 2015.  We
 have enough legacy code to maintain as it is, no need to maintain code
 for services that no longer exist.
+Remove BING_API_KEY_V1 for the same reason.  No idea when Microsoft
+shut that down but seems to be a long time ago.  Even v5 seems to be
+deprecated (and maybe no longer working) since all documentation
+points to v7.
 
 """
 
@@ -29,7 +33,6 @@ for services that no longer exist.
 
 # Obtain at:
 # https://datamarket.azure.com/dataset/5BA839F1-12CE-4CCE-BF57-A49D98D29A44
-BING_API_KEY_V1 = ""
 BING_API_KEY_V5 = ""
 
 # Obtain at:
