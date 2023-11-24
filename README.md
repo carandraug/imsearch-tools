@@ -18,15 +18,7 @@ License: MIT (see LICENSE.md)
 Installation Instructions
 -------------------------
 
-First install all Python dependencies using:
-
-    $ pip install -r requirements.txt
-
-Following this:
-
- + Add `imsearchtools` directory to your `PYTHON_PATH`
- + Update `api_credentials.py` in the `/imsearchtools/engines` directory with appropriate
-   API keys for each method you plan to use.
+    $ pip install .
 
 Usage Instructions
 ------------------
