@@ -122,7 +122,12 @@ class ImageGetter(ImageProcessor):
         response = None
         try:
             response = requests.get(
-                url, timeout=self.image_timeout, stream=True
+                url,
+                timeout=self.image_timeout,
+                stream=True,
+                headers={
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0"
+                },
             )
         except Exception as e:
             log.info("Exception while downloading from %s: %s" % (url, str(e)))
