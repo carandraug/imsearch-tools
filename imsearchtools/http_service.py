@@ -182,13 +182,13 @@ def test_func():
 
 @app.route("/")
 def index():
-    return "imsearch HTTP service is running"
+    return Response("imsearch HTTP service is running", mimetype="text/plain")
 
 
 @app.route("/callback_test")
 def callback_test():
     test_callback()
-    return "Done!"
+    return Response("Done!", mimetype="text/plain")
 
 
 @app.route("/query")
@@ -227,12 +227,14 @@ def download():
 
 @app.route("/get_engine_list")
 def get_engine_list():
-    return json.dumps(SUPPORTED_ENGINES)
+    return Response(json.dumps(SUPPORTED_ENGINES), mimetype="application/json")
 
 
 @app.route("/get_postproc_module_list")
 def get_postproc_module_list():
-    return json.dumps(get_postproc_modules())
+    return Response(
+        json.dumps(get_postproc_modules()), mimetype="application/json"
+    )
 
 
 @app.route("/init_zmq_context")
@@ -242,7 +244,7 @@ def init_zmq_context():
         import zmq
 
         zmq_context = zmq.Context()
-    return "Success"
+    return Response("Success", mimetype="text/plain")
 
 
 @app.route("/exec_pipeline", methods=["POST"])
@@ -322,7 +324,7 @@ def exec_pipeline():
     if return_dfiles_list:
         return Response(json.dumps(dfiles_list), mimetype="application/json")
 
-    return "DONE"
+    return Response("DONE", mimetype="text/plain")
 
 
 if __name__ == "__main__":
