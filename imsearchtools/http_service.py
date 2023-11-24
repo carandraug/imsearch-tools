@@ -349,6 +349,13 @@ def main(aergv: List[str]) -> int:
 
     argv_parser = argparse.ArgumentParser()
     argv_parser.add_argument(
+        "--bind",
+        type=str,
+        default="localhost",
+        metavar="ADDRESS",
+        help="bind to this address (default: %(default)s)",
+    )
+    argv_parser.add_argument(
         "--base-dir",
         default="/var/lib/imsearch-tools",
         help="save results relative to this directory (default: %(default)s)",
@@ -431,7 +438,7 @@ def main(aergv: List[str]) -> int:
         )
 
     _logger.info("Starting imsearch_http_service on port %d", args.port)
-    http_server = WSGIServer(("", args.port), app)
+    http_server = WSGIServer((args.bind, args.port), app)
 
     if sys.platform != "win32":
         # Catch Ctrl+C/sigkill/sigterm for a clean exit or it will
