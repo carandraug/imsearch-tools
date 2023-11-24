@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 
+import logging
+
 import gevent
+
+
+_logger = logging.getLogger(__name__)
 
 
 class QueryException(Exception):
@@ -54,10 +59,7 @@ class SearchClient:
             return size
         if size not in self._supported_sizes_map:
             # do not completely abort because of this
-            print(
-                "**** WARNING: Unsupported size '%s'. Ignoring value. ****"
-                % size
-            )
+            _logger.warning("Unsupported size '%s'. Ignoring value", size)
             return ""
 
         return self._supported_sizes_map[size]
@@ -67,10 +69,7 @@ class SearchClient:
             return style
         if style not in self._supported_styles_map:
             # do not completely abort because of this
-            print(
-                "**** WARNING: Unsupported style '%s'. Ignoring value. ****"
-                % style
-            )
+            _logger.warning("Unsupported style '%s'. Ignoring value", style)
             return ""
 
         return self._supported_styles_map[style]

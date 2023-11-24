@@ -24,6 +24,9 @@ from imsearchtools.process import (
 DEFAULT_SERVER_PORT = 8157
 SUPPORTED_ENGINES = ["bing_api", "google_api", "google_web", "flickr_api"]
 
+
+_logger = logging.getLogger(__name__)
+
 zmq_context = (
     None  # used to store zmq context created by init_zmq_context function
 )
@@ -152,9 +155,9 @@ def test_callback():
     cbhandler = callback_handler.CallbackHandler(test_func, 100, 50)
     for i in range(0, 100):
         cbhandler.run_callback()
-    print("Done launching callbacks!")
+    _logger.info("Done launching callbacks!")
     cbhandler.join()
-    print("Done joining callbacks")
+    _logger.info("Done joining callbacks")
 
 
 def test_func():
@@ -261,9 +264,10 @@ def exec_pipeline():
     query_res_list = imsearch_query(
         query_text, engine, query_params, query_timeout
     )
-    print(
-        "Query for %s completed: %d results retrieved"
-        % (query_text, len(query_res_list))
+    _logger.info(
+        "Query for %s completed: %d results retrieved",
+        query_text,
+        len(query_res_list),
     )
     # query_res_list = query_res_list[:5] # DEBUG CODE
     # prepare download params
@@ -281,13 +285,11 @@ def exec_pipeline():
             imgetter_params[param_nm] = int(request.form[param_nm])
 
     # download images
-    print(
-        "Downloading for %s started: %d sec improc_timeout, %d sec per_image_timeout"
-        % (
-            query_text,
-            imgetter_params["improc_timeout"],
-            imgetter_params["per_image_timeout"],
-        )
+    _logger.info(
+        "Downloading for %s started: %d sec improc_timeout, %d sec per_image_timeout",
+        query_text,
+        imgetter_params["improc_timeout"],
+        imgetter_params["per_image_timeout"],
     )
     dfiles_list = imsearch_download_to_static(
         query_res_list,
@@ -297,9 +299,10 @@ def exec_pipeline():
         imgetter_params,
         zmq_context,
     )
-    print(
-        "Downloading for %s completed: %d images retrieved"
-        % (query_text, len(dfiles_list))
+    _logger.info(
+        "Downloading for %s completed: %d images retrieved",
+        query_text,
+        len(dfiles_list),
     )
     # convert pathnames to URL paths (if not running locally and specifying
     # a custom path)
@@ -334,6 +337,6 @@ if __name__ == "__main__":
 
     app.config["base-dir"] = args.base_dir
 
-    print("Starting imsearch_http_service on port", args.port)
+    _logger.info("Starting imsearch_http_service on port %d", args.port)
     http_server = WSGIServer(("", args.port), app)
     http_server.serve_forever()

@@ -47,9 +47,8 @@ class CallbackHandler:
 
     def run_callback(self, *args, **kwargs):
         # log.debug('Starting task for file: %s', out_dict['clean_fn'])
-        log.debug("Starting task")
         self.launched_tasks = self.launched_tasks + 1
-        print("Starting task " + str(self.launched_tasks))
+        log.debug("Starting task %d", self.launched_tasks)
         worker_params = dict(args=args, kwargs=kwargs)
         self.worker_pool.apply_async(
             _callback_worker_func,
@@ -58,29 +57,24 @@ class CallbackHandler:
         )
 
     def skip(self):
-        log.debug("Skipping task")
         self.skipped_tasks = self.skipped_tasks + 1
-        print("Skipping task " + str(self.skipped_tasks))
+        log.debug("Skipping task %d", self.skipped_tasks)
         self._dec_task_count_skipped()
 
     def join(self):
         # waiting for all tasks to complete
-        log.debug("Waiting all tasks to be completed...")
-        print("Waiting for all tasks to be completed...")
+        log.debug("Waiting for all tasks to be completed...")
         while self.task_count > 0:
             pass
         self.worker_pool.close()
         self.worker_pool.join()
         log.debug("All tasks completed!")
-        print("All tasks completed!")
 
     def terminate(self):
         log.debug("Terminating workers early...")
-        print("terminating workers early...")
         self.worker_pool.terminate()
         self.worker_pool.join()
         log.debug("Done terminating!")
-        print("Done terminating!")
 
     def _dec_task_count_completed(self, retval):
         self.task_count = self.task_count - 1
@@ -97,4 +91,4 @@ class CallbackHandler:
 
 def _callback_worker_func(self, worker_params):
     worker_func(*worker_params["args"], **worker_params["kwargs"])
-    print("Done with callback!")
+    log.info("Done with callback!")

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import json
+import logging
 from hashlib import md5
 
 import requests
@@ -9,13 +10,14 @@ from imsearchtools.engines import NoAPICredentials, SearchClient
 from imsearchtools.engines.api_credentials import BING_API_KEY_V1
 
 
+_logger = logging.getLogger(__name__)
+
+
 ## API Configuration
 #  --------------------------------------------
 
 BING_API_ENTRY = "https://api.datamarket.azure.com/Data.ashx/Bing/Search/v1/"
 BING_API_FUNC = "Image"
-
-DEBUG_MESSAGES = False
 
 ## Search Class
 #  --------------------------------------------
@@ -56,9 +58,8 @@ class BingAPISearchV1(requests.Session, SearchClient):
         try:
             quoted_query = "'%s'" % query
 
-            if DEBUG_MESSAGES:
-                print(quoted_query)
-                print(BING_API_FUNC)
+            _logger.debug(quoted_query)
+            _logger.debug(BING_API_FUNC)
 
             req_result_count = min(
                 self._results_per_req, num_results - result_offset
@@ -68,8 +69,7 @@ class BingAPISearchV1(requests.Session, SearchClient):
             aux_params["Query"] = quoted_query
             aux_params["$skip"] = result_offset
             aux_params["$top"] = req_result_count
-            if DEBUG_MESSAGES:
-                print(aux_params)
+            _logger.debug(aux_params)
 
             resp = self.get(
                 BING_API_ENTRY + BING_API_FUNC,
@@ -80,12 +80,11 @@ class BingAPISearchV1(requests.Session, SearchClient):
 
             # extract list of results from response
             result_dict = resp.json()
-            if DEBUG_MESSAGES:
-                print(json.dumps(result_dict))
+            _logger.debug(result_dict)
 
             return result_dict["d"]["results"][: (num_results - result_offset)]
         except requests.exceptions.RequestException as e:
-            print("error occurred: " + str(e))
+            _logger.error(e)
             return []
 
     def __bing_results_to_results(self, results):
