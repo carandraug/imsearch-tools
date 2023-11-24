@@ -2,8 +2,6 @@ Dockerfile
 .dockerignore
 download_demo.py
 query_demo.py
-utils/
-
 .gitignore
 .git/
 
@@ -12,3 +10,5 @@ demos/
 static/
 
 venv/
+build/
+imsearch_tools.egg-info/
