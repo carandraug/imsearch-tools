@@ -21,12 +21,6 @@ from imsearchtools.process import (
 )
 
 
-# logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
-logging.basicConfig(
-    format="%(asctime)s %(levelname)s:%(message)s", level=logging.INFO
-)
-
-
 DEFAULT_SERVER_PORT = 8157
 SUPPORTED_ENGINES = ["bing_api", "google_api", "google_web", "flickr_api"]
 
@@ -319,6 +313,10 @@ def exec_pipeline():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        format="%(asctime)s %(levelname)s:%(message)s", level=logging.INFO
+    )
+
     argv_parser = argparse.ArgumentParser()
     argv_parser.add_argument(
         "--base-dir",
