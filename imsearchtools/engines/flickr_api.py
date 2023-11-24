@@ -70,7 +70,7 @@ class FlickrAPISearch(requests.Session, SearchClient):
             aux_params["page"] = page_num
 
             full_url = FLICKR_API_ENTRY + "?"
-            for key, value in aux_params.iteritems():
+            for key, value in aux_params.items():
                 full_url = full_url + key + "=" + str(value) + "&"
             full_url = full_url[: len(full_url) - 1]  # remove last '&'
 
