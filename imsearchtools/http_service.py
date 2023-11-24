@@ -4,6 +4,7 @@ import argparse
 import logging
 import os
 import sys
+import time
 
 from flask import Flask, Response, json, request
 from gevent.pywsgi import WSGIServer
@@ -161,8 +162,6 @@ def test_callback():
 
 
 def test_func():
-    import time
-
     time.sleep(5.0)
 
 
