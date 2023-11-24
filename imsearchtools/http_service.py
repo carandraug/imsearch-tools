@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
 import argparse
+import copy
 import logging
+import operator
 import os
 import os.path
 import sys
 import time
-from typing import List
+from typing import Any, Dict, List
 
 from flask import Flask, Response, json, request
 from gevent.pywsgi import WSGIServer
@@ -23,8 +25,6 @@ from imsearchtools.process import (
 )
 
 
-SUPPORTED_ENGINES = ["bing_api", "google_api", "google_web", "flickr_api"]
-
 _logger = logging.getLogger(__name__)
 
 zmq_context = (
@@ -35,9 +35,11 @@ app = Flask(__name__)
 app.debug = True
 
 
-def imsearch_query(query, engine, query_params, query_timeout=-1.0):
+def imsearch_query(
+    query, engine, engine_args, query_params, query_timeout=-1.0
+):
     # prepare input arguments for searcher initialization if non-default
-    searcher_args = dict()
+    searcher_args = copy.deepcopy(engine_args)
     if query_timeout > 0.0:
         searcher_args["timeout"] = query_timeout
     # initialize searcher
@@ -170,9 +172,14 @@ def callback_test():
 
 @app.route("/query")
 def query():
-    # parse GET args
-    query_text = request.args["q"]
     engine = request.args.get("engine", "google_web")
+    if engine not in app.config["enabled-engines"]:
+        return Response(
+            f"'{engine}' engine disabled (check '/get_engine_list' first)",
+            status=400,
+        )
+
+    query_text = request.args["q"]
 
     query_params = dict()
     for param_nm in ["size", "style"]:
@@ -182,7 +189,9 @@ def query():
         query_params["num_results"] = int(request.args["num_results"])
 
     # execute query
-    query_res_list = imsearch_query(query_text, engine, query_params)
+    query_res_list = imsearch_query(
+        query_text, engine, app.config["engine-args"][engine], query_params
+    )
     return Response(json.dumps(query_res_list), mimetype="application/json")
 
 
@@ -207,7 +216,9 @@ def download():
 
 @app.route("/get_engine_list")
 def get_engine_list():
-    return Response(json.dumps(SUPPORTED_ENGINES), mimetype="application/json")
+    return Response(
+        json.dumps(app.config["enabled-engines"]), mimetype="application/json"
+    )
 
 
 @app.route("/get_postproc_module_list")
@@ -230,8 +241,15 @@ def init_zmq_context():
 @app.route("/exec_pipeline", methods=["POST"])
 def exec_pipeline():
     # parse POST form args
-    query_text = request.form["q"]
     engine = request.form.get("engine", "google_web")
+    if engine not in app.config["enabled-engines"]:
+        return Response(
+            f"'{engine}' engine disabled (check '/get_engine_list' first)",
+            status=400,
+        )
+
+    query_text = request.form["q"]
+
     postproc_module = request.form.get(
         "postproc_module", None
     )  # default to no postproc module
@@ -266,7 +284,11 @@ def exec_pipeline():
         query_params["num_results"] = int(request.form["num_results"])
     # execute query
     query_res_list = imsearch_query(
-        query_text, engine, query_params, query_timeout
+        query_text,
+        engine,
+        app.config["engine-args"][engine],
+        query_params,
+        query_timeout,
     )
     _logger.info(
         "Query for %s completed: %d results retrieved",
@@ -341,6 +363,22 @@ def main(aergv: List[str]) -> int:
         help="Enables custom_local_path (dangerous!)",
     )
     argv_parser.add_argument(
+        "--bing-api-v5-key",
+        help="Bing API subscription key (enables bing_api engine)",
+    )
+    argv_parser.add_argument(
+        "--flickr-api-key",
+        help="Flickr API key for your application (enables flickr_api engine)",
+    )
+    argv_parser.add_argument(
+        "--google-search-engine-id",
+        help="Google Programmable Search Engine ID (enables google_api engine)",
+    )
+    argv_parser.add_argument(
+        "--google-api-key",
+        help="Google Custom Search JSON API key (enables google_api engine)",
+    )
+    argv_parser.add_argument(
         "port",
         type=int,
         default=8157,
@@ -351,6 +389,45 @@ def main(aergv: List[str]) -> int:
 
     app.config["base-dir"] = args.base_dir
     app.config["custom-local-path-enabled"] = args.enable_custom_local_path
+
+    # List of enabled engine.
+    app.config["enabled-engines"]: List[str] = []
+    # Map of engine name to the arguments required to construct it
+    # (effectively, API keys)
+    app.config["engine-args"]: Dict[str, Any] = {}
+
+    # By default, only enable google web which does not require any
+    # secrets.  Enabling the other engines is implicit by providing
+    # their required keys.
+    app.config["enabled-engines"].append("google_web")
+    app.config["engine-args"]["google_web"] = {}
+
+    if args.bing_api_v5_key:
+        app.config["enabled-engines"].append("bing_api")
+        app.config["engine-args"]["bing_api"] = {
+            "api_key": args.bing_api_v5_key
+        }
+
+    if args.flickr_api_key:
+        app.config["enabled-engines"].append("flickr_api")
+        app.config["engine-args"]["flickr_api"] = {
+            "api_key": args.flickr_api_key
+        }
+
+    if args.google_search_engine_id and args.google_api_key:
+        app.config["enabled-engines"].append("google_api")
+        app.config["engine-args"]["google_api"] = {
+            "search_engine_id": args.google_search_engine_id,
+            "api_key": args.google_api_key,
+        }
+    elif operator.xor(
+        bool(args.google_search_engine_id), bool(args.google_api_key)
+    ):
+        _logger.warn(
+            "only one of --google-search-engine-id and --google-api-key"
+            " options was specified but they only make sense when paired"
+            " with the other (google_api engine will be disabled)"
+        )
 
     _logger.info("Starting imsearch_http_service on port %d", args.port)
     http_server = WSGIServer(("", args.port), app)

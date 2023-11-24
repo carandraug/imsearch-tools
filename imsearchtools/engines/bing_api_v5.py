@@ -5,8 +5,7 @@ import logging
 
 import requests
 
-from imsearchtools.engines import NoAPICredentials, SearchClient
-from imsearchtools.engines.api_credentials import BING_API_KEY_V5
+from imsearchtools.engines import SearchClient
 
 
 _logger = logging.getLogger(__name__)
@@ -24,17 +23,17 @@ BING_API_ENTRY = "https://api.cognitive.microsoft.com/bing/v5.0/images/search"
 class BingAPISearchV5(requests.Session, SearchClient):
     """Wrapper class for Bing Image Search API. For more details see:
     http://www.bing.com/developers/
+
+    Args:
+        api_key: subscription key received when signing up for Bing
+            Image Search API v5 in Cognitive Services.  It is the
+            value used in the ``Ocp-Apim-Subscription-Key`` header.
+
     """
 
-    def __init__(self, async_query=True, timeout=5.0, **kwargs):
+    def __init__(self, api_key: str, async_query=True, timeout=5.0, **kwargs):
         super().__init__()
-
-        if not BING_API_KEY_V5:
-            raise NoAPICredentials(
-                "API Credentials must be specified in imsearch/engines/api_credentials.py"
-            )
-
-        self.headers = {"Ocp-Apim-Subscription-Key": BING_API_KEY_V5}
+        self.headers = {"Ocp-Apim-Subscription-Key": api_key}
         self.timeout = timeout
 
         self._results_per_req = 50

@@ -4,8 +4,7 @@ from hashlib import md5
 
 import requests
 
-from imsearchtools.engines import NoAPICredentials, SearchClient
-from imsearchtools.engines.api_credentials import GOOGLE_API_CX, GOOGLE_API_KEY
+from imsearchtools.engines import SearchClient
 
 
 ## API Configuration
@@ -23,19 +22,37 @@ class GoogleAPISearch(requests.Session, SearchClient):
     https://developers.google.com/custom-search/v1/overview/
     https://developers.google.com/custom-search/json-api/v1/reference/cse/list
 
-    ** NOTE: This updated API only offers search over 'custom search engines' for which
-       URLs of specific websites must be specified, although there is an option in the
-       control panel to search 'the entire web, preferring listed websites' - apparently
-       there is no way to search the web without specifying a list of custom URLs **
+    This uses a Google Programmable Search Engine and Google's Custom
+    Search JSON API .  These are two things that need to be setup
+    separately:
+
+    1. The Programmable Search Engine needs to be setup first and
+       controls what is searched (restricted list of websites or whole
+       web, whether safe search is enabled, language, etc).  From this
+       we need the search engine ID (sometimes called API context).
+
+    2. The Custom Search JSON API is the method to search on that
+       search engine.  An API key is required to search it with this
+       class.
+
+    Args:
+        api_key: API key for custom Search JSON API.
+        search_engine_id: the ID for the programmable Search Engine to
+            use.
+
     """
 
-    def __init__(self, async_query=True, timeout=5.0, **kwargs):
+    def __init__(
+        self,
+        api_key: str,
+        search_engine_id: str,
+        async_query=True,
+        timeout=5.0,
+        **kwargs,
+    ):
         super().__init__()
-
-        if not GOOGLE_API_KEY or not GOOGLE_API_CX:
-            raise NoAPICredentials(
-                "API Credentials must be specified in imsearch/engines/api_credentials.py"
-            )
+        self.api_key = api_key
+        self.search_engine_id = search_engine_id
 
         self.headers.update(kwargs)
         self.timeout = timeout
@@ -108,8 +125,8 @@ class GoogleAPISearch(requests.Session, SearchClient):
 
         # prepare auxilary parameter list
         aux_params = {
-            "cx": GOOGLE_API_CX,
-            "key": GOOGLE_API_KEY,
+            "cx": self.search_engine_id,
+            "key": self.api_key,
             "searchType": "image",
         }
         if size:

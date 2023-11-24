@@ -20,10 +20,17 @@ outdir = os.path.join(os.getcwd(), "demos")
 if not os.path.isdir(outdir):
     os.makedirs(outdir)
 
+# Note that actually testing these requires defining the corresponding
+# API keys (see variables below).
 test_bing_api_v5 = True
 test_google_api = True
 test_google_web = True
 test_flickr_api = True
+
+bing_api_v5_key = ""
+google_search_engine_id = ""
+google_api_key = ""
+flickr_api_key = ""
 
 num_results = 100
 
@@ -33,7 +40,9 @@ all_results = []
 all_generator_names = []
 
 if test_bing_api_v5:
-    bing_api_searcher = BingAPISearchV5()
+    if not bing_api_v5_key:
+        print("Bing API Key not specified - this is likely to fail")
+    bing_api_searcher = BingAPISearchV5(test_bing_api_v5_key)
     print("Executing Bing API Search V5...")
     t = time.time()
     bing_api_results = bing_api_searcher.query(test_query_str)
@@ -54,7 +63,13 @@ if test_bing_api_v5:
     all_generator_names.append("BingAPISearchV5()")
 
 if test_google_api:
-    google_api_searcher = GoogleAPISearch()
+    if not google_api_key:
+        print("Google API Key not specified - this is likely to fail")
+    if not google_search_engine_id:
+        print("Google Search engine ID not specified - this is likely to fail")
+    google_api_searcher = GoogleAPISearch(
+        google_api_key, google_search_engine_id
+    )
     print("Executing Google API Search (Custom Search)...")
     t = time.time()
     google_api_results = google_api_searcher.query(
@@ -101,7 +116,9 @@ if test_google_web:
 
 
 if test_flickr_api:
-    flickr_api_searcher = FlickrAPISearch()
+    if not flickr_api_key:
+        print("Flickr API key not specified - this is likely to fail")
+    flickr_api_searcher = FlickrAPISearch(flickr_api_key)
     print("Executing Flickr API Search...")
     t = time.time()
     flickr_api_results = flickr_api_searcher.query(

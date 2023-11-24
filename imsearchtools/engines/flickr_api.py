@@ -4,8 +4,7 @@ from hashlib import md5
 
 import requests
 
-from imsearchtools.engines import NoAPICredentials, SearchClient
-from imsearchtools.engines.api_credentials import FLICKR_API_KEY
+from imsearchtools.engines import SearchClient
 
 
 ## API Configuration
@@ -19,22 +18,20 @@ FLICKR_API_METHOD = "flickr.photos.search"
 
 
 class FlickrAPISearch(requests.Session, SearchClient):
-    """
-    Wrapper class for Flickr API. For more details see:
+    """Wrapper class for Flickr API. For more details see:
     http://www.flickr.com/services/api/
     For a reference use the Explorer:
     https://www.flickr.com/services/api/explore/flickr.photos.search
     For help and bus reports try:
     https://www.flickr.com/help/forum/
+
+    Args:
+        api_key: your API application key.
     """
 
-    def __init__(self, async_query=True, timeout=5.0, **kwargs):
+    def __init__(self, api_key: str, async_query=True, timeout=5.0, **kwargs):
         super().__init__()
-
-        if not FLICKR_API_KEY:
-            raise NoAPICredentials(
-                "API Credentials must be specified in imsearch/engines/api_credentials.py"
-            )
+        self.api_key = api_key
 
         self.headers.update(kwargs)
         self.timeout = timeout
@@ -116,7 +113,7 @@ class FlickrAPISearch(requests.Session, SearchClient):
         # prepare auxilary parameter list
         aux_params = {
             "method": FLICKR_API_METHOD,
-            "api_key": FLICKR_API_KEY,
+            "api_key": self.api_key,
             "format": "json",
             "nojsoncallback": 1,
             "sort": "relevance",
