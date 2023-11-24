@@ -215,7 +215,9 @@ the following functions can be used:
              of the server and URLs are returned (e.g. `http://server.com/static/result.jpg`).
              If this parameter is specified, a different path on the local system is used
              instead and the paths returned are local paths instead of URLs (e.g.
-             `/my/custom/folder/result.jpg`)
+             `/my/custom/folder/result.jpg`).  This option is potentially dangerous since
+             *any* filepath can be specified and is disabled by default.  It needs to be
+             enabled when starting the service with `--enable-custom-local-path`.
            + `query_timeout` – timeout in seconds for the entire function call
            + `improc_timeout` – timeout in seconds for downloading each image
            + `resize_width` and `resize_height` – if specified, all downloaded images will be

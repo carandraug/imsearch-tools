@@ -3,6 +3,7 @@
 import argparse
 import logging
 import os
+import os.path
 import sys
 import time
 
@@ -23,7 +24,6 @@ from imsearchtools.process import (
 
 DEFAULT_SERVER_PORT = 8157
 SUPPORTED_ENGINES = ["bing_api", "google_api", "google_web", "flickr_api"]
-
 
 _logger = logging.getLogger(__name__)
 
@@ -55,11 +55,11 @@ def imsearch_query(query, engine, query_params, query_timeout=-1.0):
     return searcher.query(query, **query_params)
 
 
-def imsearch_download_to_static(
+def imsearch_download_to_dir(
     query_res_list,
     postproc_module=None,
     postproc_extra_prms=None,
-    custom_local_path=None,
+    outdir=None,
     imgetter_params=None,
     zmq_context=None,
 ):
@@ -87,12 +87,7 @@ def imsearch_download_to_static(
 
     imgetter = image_getter.ImageGetter(**ig_params)
 
-    if not custom_local_path:
-        outdir = os.path.join(app.config["base-dir"], "static")
-    else:
-        outdir = custom_local_path
-    if not os.path.isdir(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
     # add zmq context and socket as extra parameter if required
     if type(postproc_extra_prms) is not dict:
@@ -200,7 +195,10 @@ def download():
             "Input must be 'application/json' encoded list of urls"
         )
     # download images
-    dfiles_list = imsearch_download_to_static(query_res_list)
+    dfiles_list = imsearch_download_to_dir(
+        query_res_list,
+        outdir=os.path.join(app.config["base-dir"], "static"),
+    )
     # convert pathnames to URL paths
     url_dfiles_list = make_url_dfiles_list(dfiles_list, app.config["base-dir"])
 
@@ -240,7 +238,17 @@ def exec_pipeline():
     postproc_extra_prms = request.form.get("postproc_extra_prms", None)
     if postproc_extra_prms:
         postproc_extra_prms = json.loads(postproc_extra_prms)
-    custom_local_path = request.form.get("custom_local_path", None)
+
+    if app.config["custom-local-path-enabled"]:
+        custom_local_path = request.form.get("custom_local_path", None)
+        if not custom_local_path:
+            save_dir = os.path.join(app.config["base-dir"], "static")
+        else:
+            save_dir = custom_local_path
+    else:
+        custom_local_path = None
+        save_dir = os.path.join(app.config["base-dir"], "static")
+
     # < default to returning list only if not using postproc module >
     return_dfiles_list = request.form.get(
         "return_dfiles_list", (postproc_module is None)
@@ -287,11 +295,11 @@ def exec_pipeline():
         imgetter_params["improc_timeout"],
         imgetter_params["per_image_timeout"],
     )
-    dfiles_list = imsearch_download_to_static(
+    dfiles_list = imsearch_download_to_dir(
         query_res_list,
         postproc_module,
         postproc_extra_prms,
-        custom_local_path,
+        save_dir,
         imgetter_params,
         zmq_context,
     )
@@ -322,6 +330,16 @@ if __name__ == "__main__":
         default="/var/lib/imsearch-tools",
         help="save results relative to this directory (default: %(default)s)",
     )
+    ## The `custom_local_path` option overrides the `--base-dir`
+    ## option and provides a means for the service to save files
+    ## *anywhere* --- obviously a terrible idea.  Maybe it makes sense
+    ## when running as normal user and listening on localhost only.
+    ## It is disabled by default.
+    argv_parser.add_argument(
+        "--enable-custom-local-path",
+        action="store_true",
+        help="Enables custom_local_path (dangerous!)",
+    )
     argv_parser.add_argument(
         "port",
         type=int,
@@ -332,6 +350,7 @@ if __name__ == "__main__":
     args = argv_parser.parse_args(sys.argv[1:])
 
     app.config["base-dir"] = args.base_dir
+    app.config["custom-local-path-enabled"] = args.enable_custom_local_path
 
     _logger.info("Starting imsearch_http_service on port %d", args.port)
     http_server = WSGIServer(("", args.port), app)
