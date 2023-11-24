@@ -8,7 +8,6 @@ from imsearchtools.engines.bing_api_v1 import BingAPISearchV1
 from imsearchtools.engines.bing_api_v5 import BingAPISearchV5
 from imsearchtools.engines.flickr_api import FlickrAPISearch
 from imsearchtools.engines.google_api import GoogleAPISearch
-from imsearchtools.engines.google_old_api import GoogleOldAPISearch
 from imsearchtools.engines.google_web import GoogleWebSearch
 from imsearchtools.utils import result_page_gen
 
@@ -24,7 +23,6 @@ if not os.path.isdir(outdir):
 
 test_bing_api_v1 = False  # deprecated, to be removed later
 test_bing_api_v5 = True
-test_google_old_api = False  # deprecated, to be removed later
 test_google_api = True
 test_google_web = True
 test_flickr_api = True
@@ -79,29 +77,6 @@ if test_bing_api_v5:
 
     all_results.append(bing_api_results)
     all_generator_names.append("BingAPISearchV5()")
-
-if test_google_old_api:
-    google_old_api_searcher = GoogleOldAPISearch()
-    print("Executing Google API Search (Old)...")
-    t = time.time()
-    google_old_api_results = google_old_api_searcher.query(
-        test_query_str, num_results=num_results
-    )
-    google_old_api_timing = time.time() - t
-    print(
-        "Retrieved %d results in %f seconds"
-        % (len(google_old_api_results), google_old_api_timing)
-    )
-
-    result_page_gen.gen_results_page(
-        google_old_api_results,
-        "GoogleOldAPISearch()",
-        os.path.join(outdir, "google_old_api_results.html"),
-        show_in_browser=False,
-    )
-
-    all_results.append(google_old_api_results)
-    all_generator_names.append("GoogleOldAPISearch()")
 
 if test_google_api:
     google_api_searcher = GoogleAPISearch()

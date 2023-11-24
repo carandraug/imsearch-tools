@@ -56,13 +56,6 @@ Currently the following search services are supported:
        `GoogleAPISearch()`
      - Details and authentication key available at:
        <https://developers.google.com/custom-search/v1/overview/>
- + **GoogleOldAPISearch ( )** – Image search using Google, using the *Google Image Search API*
-     - **The *Google Image Search API* is now deprecated**
-     - A limit of 64 images per search is imposed
-     - There is a higher default limit on number of free requests/day than with the
-       new API
-     - Details and authentication key available at:
-       <https://developers.google.com/image-search/>
  + **BingAPISearchV1 ( )** – Image search using Bing, using the *Bing Search API V1*
      - **The *Bing Search API V1* is now deprecated**
      - Details and authentication key available at:

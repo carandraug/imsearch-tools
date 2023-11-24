@@ -12,7 +12,6 @@ from gevent.pywsgi import WSGIServer
 from imsearchtools.engines.bing_api_v5 import BingAPISearchV5
 from imsearchtools.engines.flickr_api import FlickrAPISearch
 from imsearchtools.engines.google_api import GoogleAPISearch
-from imsearchtools.engines.google_old_api import GoogleOldAPISearch
 from imsearchtools.engines.google_web import GoogleWebSearch
 from imsearchtools.postproc_modules import module_finder
 from imsearchtools.process import (
@@ -44,8 +43,6 @@ def imsearch_query(query, engine, query_params, query_timeout=-1.0):
     # initialize searcher
     if engine == "bing_api":
         searcher = BingAPISearchV5(**searcher_args)
-    elif engine == "google_old_api":
-        searcher = GoogleOldAPISearch(**searcher_args)
     elif engine == "google_api":
         searcher = GoogleAPISearch(**searcher_args)
     elif engine == "google_web":

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Module: api_credentials
+"""Module: api_credentials
 Author: Ken Chatfield <ken@robots.ox.ac.uk>
 Created on: 16 Oct 2012
 
@@ -18,6 +17,11 @@ Renamed the BING_API key to BING_API_KEY_V1 to reflect the version number
 Added BING_API_KEY_V5 as the key for the new version (v5) of the BING API
 Ernesto Coto
 
+24 Nov 2023
+Removed GOOGLE_OLD_API_KEY since Google removed it back in 2015.  We
+have enough legacy code to maintain as it is, no need to maintain code
+for services that no longer exist.
+
 """
 
 ## API Credentials
@@ -27,10 +31,6 @@ Ernesto Coto
 # https://datamarket.azure.com/dataset/5BA839F1-12CE-4CCE-BF57-A49D98D29A44
 BING_API_KEY_V1 = ""
 BING_API_KEY_V5 = ""
-
-# Obtain at:
-# https://developers.google.com/image-search/
-GOOGLE_OLD_API_KEY = ""
 
 # Obtain at:
 # https://developers.google.com/custom-search/v1/overview
