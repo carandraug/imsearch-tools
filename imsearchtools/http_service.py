@@ -104,7 +104,7 @@ def imsearch_download_to_static(
     imgetter = image_getter.ImageGetter(**ig_params)
 
     if not custom_local_path:
-        outdir = os.path.join(os.getcwd(), "static")
+        outdir = os.path.join(app.config["base-dir"], "static")
     else:
         outdir = custom_local_path
     if not os.path.isdir(outdir):
@@ -140,18 +140,23 @@ def imsearch_download_to_static(
     return imgetter.process_urls(query_res_list, outdir)
 
 
-def make_url_dfiles_list(dfiles_list):
-    cwd = os.getcwd()
+def make_url_dfiles_list(dfiles_list, base_dir):
     # recast local fs image paths as server paths using hostname from request
     for dfile_ifo in dfiles_list:
         dfile_ifo["orig_fn"] = (
-            "http://" + request.host + dfile_ifo["orig_fn"].replace(cwd, "")
+            "http://"
+            + request.host
+            + dfile_ifo["orig_fn"].replace(base_dir, "")
         )
         dfile_ifo["thumb_fn"] = (
-            "http://" + request.host + dfile_ifo["thumb_fn"].replace(cwd, "")
+            "http://"
+            + request.host
+            + dfile_ifo["thumb_fn"].replace(base_dir, "")
         )
         dfile_ifo["clean_fn"] = (
-            "http://" + request.host + dfile_ifo["clean_fn"].replace(cwd, "")
+            "http://"
+            + request.host
+            + dfile_ifo["clean_fn"].replace(base_dir, "")
         )
     return dfiles_list
 
@@ -215,7 +220,7 @@ def download():
     # download images
     dfiles_list = imsearch_download_to_static(query_res_list)
     # convert pathnames to URL paths
-    url_dfiles_list = make_url_dfiles_list(dfiles_list)
+    url_dfiles_list = make_url_dfiles_list(dfiles_list, app.config["base-dir"])
 
     return Response(json.dumps(url_dfiles_list), mimetype="application/json")
 
@@ -312,7 +317,7 @@ def exec_pipeline():
     # convert pathnames to URL paths (if not running locally and specifying
     # a custom path)
     if not custom_local_path:
-        dfiles_list = make_url_dfiles_list(dfiles_list)
+        dfiles_list = make_url_dfiles_list(dfiles_list, app.config["base-dir"])
 
     if return_dfiles_list:
         return Response(json.dumps(dfiles_list), mimetype="application/json")
@@ -323,6 +328,11 @@ def exec_pipeline():
 if __name__ == "__main__":
     argv_parser = argparse.ArgumentParser()
     argv_parser.add_argument(
+        "--base-dir",
+        default=os.getcwd(),
+        help="save results relative to this directory (default: current directory)",
+    )
+    argv_parser.add_argument(
         "port",
         type=int,
         default=DEFAULT_SERVER_PORT,
@@ -330,6 +340,8 @@ if __name__ == "__main__":
         help="bind to this port (default: %(default)s)",
     )
     args = argv_parser.parse_args(sys.argv[1:])
+
+    app.config["base-dir"] = args.base_dir
 
     print("Starting imsearch_http_service on port", args.port)
     http_server = WSGIServer(("", args.port), app)
