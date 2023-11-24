@@ -31,9 +31,7 @@ class FlickrAPISearch(requests.Session, SearchClient):
     def __init__(self, async_query=True, timeout=5.0, **kwargs):
         super().__init__()
 
-        if (
-            not FLICKR_API_KEY
-        ):  # or not FLICKR_API_SECRET: The API secret is not needed unless the request is signed. Keep it secret until really needed.
+        if not FLICKR_API_KEY:
             raise NoAPICredentials(
                 "API Credentials must be specified in imsearch/engines/api_credentials.py"
             )
