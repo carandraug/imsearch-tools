@@ -23,7 +23,6 @@ from imsearchtools.process import (
 )
 
 
-DEFAULT_SERVER_PORT = 8157
 SUPPORTED_ENGINES = ["bing_api", "google_api", "google_web", "flickr_api"]
 
 _logger = logging.getLogger(__name__)
@@ -344,7 +343,7 @@ def main(aergv: List[str]) -> int:
     argv_parser.add_argument(
         "port",
         type=int,
-        default=DEFAULT_SERVER_PORT,
+        default=8157,
         nargs="?",
         help="bind to this port (default: %(default)s)",
     )
