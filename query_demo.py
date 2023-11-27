@@ -42,7 +42,7 @@ all_generator_names = []
 if test_bing_api_v5:
     if not bing_api_v5_key:
         print("Bing API Key not specified - this is likely to fail")
-    bing_api_searcher = BingAPISearchV5(test_bing_api_v5_key)
+    bing_api_searcher = BingAPISearchV5(bing_api_v5_key)
     print("Executing Bing API Search V5...")
     t = time.time()
     bing_api_results = bing_api_searcher.query(test_query_str)
